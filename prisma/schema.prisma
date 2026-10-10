@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Vendor {
+  id           String        @id @default(uuid())
+  name         String
+  phone        String        @unique
+  serviceType  String        // MILK, NEWSPAPER, WATER, TIFFIN
+  upiId        String
+  createdAt    DateTime      @default(now())
+  customers    Customer[]
+  monthlyBills MonthlyBill[]
+}
+
+model Customer {
+  id               String       @id @default(uuid())
+  vendorId         String
+  vendor           Vendor       @relation(fields: [vendorId], references: [id])
+  name             String
+  phone            String       @unique
+  address          String
+  routeOrder       Int
+  defaultQuantity  Float
+  ratePerUnit      Float
+  active           Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  dailyLogs        DailyLog[]
+  monthlyBills     MonthlyBill[]
+}
+
+model DailyLog {
+  id           String    @id @default(uuid())
+  customerId   String
+  customer     Customer  @relation(fields: [customerId], references: [id])
+  date         DateTime
+  status       String    // DELIVERED, SKIPPED, EXTRA
+  quantity     Float
+  notes        String?
+  createdAt    DateTime  @default(now())
+}
+
+model MonthlyBill {
+  id           String    @id @default(uuid())
+  customerId   String
+  customer     Customer  @relation(fields: [customerId], references: [id])
+  vendorId     String
+  vendor       Vendor    @relation(fields: [vendorId], references: [id])
+  month        String    // e.g., "2026-10"
+  totalAmount  Float
+  status       String    // PENDING, PAID
+  paymentLink  String?
+  createdAt    DateTime  @default(now())
+}
