@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
-import { connection } from 'next/server';
 import { Truck, Users, Wallet } from 'lucide-react';
 import './globals.css';
 
@@ -12,12 +11,11 @@ export const metadata: Metadata = {
   description: 'WhatsApp-first daily delivery tracker for vendors.',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await connection();
   const date = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   return (
